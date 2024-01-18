@@ -27,21 +27,21 @@ void initializeDeck() {
     for (int i = 0; i < TOTAL_CARDS; i++) {
         deck[i].value = values[i % CARD_VALUES];
         deck[i].suit = suits[i / CARD_VALUES];
-        deck[i].numericValue = (i % CARD_VALUES) + 1;
+        deck[i].numericValue = (i % CARD_VALUES) + 2;
         if (deck[i].numericValue > 10) deck[i].numericValue = 10;
         if (i % CARD_VALUES == CARD_VALUES - 1) deck[i].numericValue = 11;
     }
 }
 
-void shuffleDeck() {
-    srand(time(NULL));
-    for (int i = 0; i < TOTAL_CARDS; i++) {
-        int j = rand() % TOTAL_CARDS;
-        struct card temp = deck[i];
-        deck[i] = deck[j];
-        deck[j] = temp;
+    void shuffleDeck() {
+        srand(time(NULL));
+        for (int i = 0; i < TOTAL_CARDS; i++) {
+            int j = rand() % TOTAL_CARDS;
+            struct card temp = deck[i];
+            deck[i] = deck[j];
+            deck[j] = temp;
+        }
     }
-}
 
 void showCard(struct card c) {
     printf("  %s of %s\n", c.value, c.suit);
