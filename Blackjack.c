@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #define TOTAL_CARDS 52
 #define CARD_VALUES 13
@@ -17,31 +18,13 @@ struct card {
     int numericValue;
 };
 
+
+
 struct card deck[TOTAL_CARDS];
 struct card playerHand[MAX_HAND];
 int numPlayerCards = 0;
 int playerSum = 0;
 char choice;
-
-void initializeDeck() {
-    for (int i = 0; i < TOTAL_CARDS; i++) {
-        deck[i].value = values[i % CARD_VALUES];
-        deck[i].suit = suits[i / CARD_VALUES];
-        deck[i].numericValue = (i % CARD_VALUES) + 2;
-        if (deck[i].numericValue > 10) deck[i].numericValue = 10;
-        if (deck[i].value == "A") deck[i].numericValue = 11;
-    }
-}
-
-    void shuffleDeck() {
-        srand(time(NULL));
-        for (int i = 0; i < TOTAL_CARDS; i++) {
-            int j = rand() % TOTAL_CARDS;
-            struct card temp = deck[i];
-            deck[i] = deck[j];
-            deck[j] = temp;
-        }
-    }
 
 void showCard(struct card c) {
     printf("  %s of %s\n", c.value, c.suit);
@@ -69,8 +52,22 @@ int sumHand(struct card hand[], int numCards) {
 }
 
 int main() {
-    initializeDeck();
-    shuffleDeck();
+
+    for (int i = 0; i < TOTAL_CARDS; i++) {
+        deck[i].value = values[i % CARD_VALUES];
+        deck[i].suit = suits[i / CARD_VALUES];
+        deck[i].numericValue = (i % CARD_VALUES) + 2;
+        if (deck[i].numericValue > 10) deck[i].numericValue = 10;
+        if (strcmp(deck[i].value, "A") == 0) deck[i].numericValue = 11;
+    }
+
+        srand(time(NULL));
+    for (int i = 0; i < TOTAL_CARDS; i++) {
+        int j = rand() % TOTAL_CARDS;
+        struct card temp = deck[i];
+        deck[i] = deck[j];
+        deck[j] = temp;
+    }
 
     printf("Welcome to Blackjack!\n");
 
@@ -84,10 +81,10 @@ int main() {
     printf("Total amount: %d\n", playerSum);
 
     while (playerSum < 21) {
-        printf("Take another card? (y/n): ");
+        printf("Hit or stand (H/S): ");
         scanf(" %c", &choice);
 
-        if (choice == 'y' || choice == 'Y') {
+        if (choice == 'H' || choice == 'h') {
             playerHand[numPlayerCards] = deck[numPlayerCards + 1];
             playerSum = sumHand(playerHand, ++numPlayerCards);
 
@@ -99,12 +96,20 @@ int main() {
         }
     }
 
-    if (playerSum == 21) {
-        printf("Blackjack! You win the game.\n");
+    srand(time(NULL));
+    int Dealer = rand() % 10 + 17;
+    if (playerSum == 21 && Dealer == 21) {
+        printf("Blackjack! But you draw with Dealer\n");
+    } else if(playerSum == 21 && Dealer != 21){
+        printf("Blackjack! You win the game!\nDealer's hand: %i", Dealer);
     } else if (playerSum > 21) {
         printf("You have gone too far. End of the game.\n");
-    } else {
-        printf("You're done with %d. End of the game.\n", playerSum);
+    } else if (playerSum < 21 && Dealer > 21){
+        printf("You win the game! Dealer got %i", Dealer);
+    } else if(playerSum > Dealer){
+        printf("You win the game! Dealer got %i, and you %i \n", Dealer, playerSum);
+    } else if(playerSum == Dealer){
+        printf("You draw with the Dealer. Dealer's hand: %i", Dealer);
     }
 
     return 0;
