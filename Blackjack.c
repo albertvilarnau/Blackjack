@@ -29,7 +29,7 @@ void initializeDeck() {
         deck[i].suit = suits[i / CARD_VALUES];
         deck[i].numericValue = (i % CARD_VALUES) + 2;
         if (deck[i].numericValue > 10) deck[i].numericValue = 10;
-        if (i % CARD_VALUES == CARD_VALUES - 1) deck[i].numericValue = 11;
+        if (deck[i].value == "A") deck[i].numericValue = 11;
     }
 }
 
@@ -45,13 +45,26 @@ void initializeDeck() {
 
 void showCard(struct card c) {
     printf("  %s of %s\n", c.value, c.suit);
+
 }
 
 int sumHand(struct card hand[], int numCards) {
     int sum = 0;
+    int Aces = 0;
+
     for (int i = 0; i < numCards; i++) {
         sum += hand[i].numericValue;
+
+        if (hand[i].numericValue == 11 && strcmp(hand[i].value, "A") == 0) {
+            Aces++;
+        }
     }
+
+    while (sum > 21 && Aces > 0) {
+        sum -= 10;
+        Aces--;
+    }
+
     return sum;
 }
 
